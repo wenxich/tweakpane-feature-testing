@@ -1,0 +1,14 @@
+/* adjust margins for three.js */
+
+body {
+  margin: 0;
+}
+
+/* adjust position for tweakpane pane */
+
+#container {
+  position: fixed;
+  right: 20%;
+  top: 70%;
+  margin: 0 auto;
+}
