@@ -11,7 +11,7 @@ import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
  */
 
 //initialize global variables
-let globalWidth = 2, globalHeight = 2, globalDepth = 2;
+let globalWidth = 2, globalHeight = 2, globalDepth = 2, globalPlaneFactor = 2;
 
 const pane = new Pane({
     container: document.getElementById('container'),
@@ -40,6 +40,13 @@ tab.pages[0].addInput(widthParams, 'width', {
         globalHeight,
         globalDepth
     );
+    planeMesh.geometry.dispose();
+    planeMesh.geometry = new THREE.PlaneGeometry(
+        globalWidth * globalPlaneFactor,
+        globalHeight * globalPlaneFactor,
+        10,
+        10
+    );
 });
 
 // tweakpane - height
@@ -57,6 +64,13 @@ tab.pages[0].addInput(heightParams, 'height', {
         globalWidth,
         globalHeight,
         globalDepth
+    );
+    planeMesh.geometry.dispose();
+    planeMesh.geometry = new THREE.PlaneGeometry(
+        globalWidth * globalPlaneFactor,
+        globalHeight * globalPlaneFactor,
+        10,
+        10
     );
 });
 
@@ -85,6 +99,48 @@ const colorParams = {
 };
 tab.pages[1].addInput(colorParams, 'skin')
     .on('change', (ev) => boxMesh.material.color.set(ev.value));
+
+//tweakpane - new panel
+
+const disablePane = new Pane();
+
+const planeVisibilityButton = disablePane.addButton({
+    title: 'show',
+    label: 'plane'
+});
+
+const planeFolder = disablePane.addFolder({
+    title: 'Plane Parameters',
+});
+
+planeFolder.disabled = true;
+
+const planeSizeSliderParams = {
+    size: 2, //starts as double the size of the box's params
+};
+const planeSlider = planeFolder.addInput(planeSizeSliderParams, 'size', {
+    min: 1, //min = double the size of the box's params
+    max: 4, //max = quadruple the size of the box's params
+})
+
+planeSlider.on('change', (ev) => {
+    planeMesh.geometry.dispose();
+    globalPlaneFactor = ev.value;
+    planeMesh.geometry = new THREE.PlaneGeometry(
+        globalWidth * globalPlaneFactor,
+        globalHeight * globalPlaneFactor,
+        10,
+        10
+    );
+});
+
+planeSlider.disabled = true;
+
+planeVisibilityButton.on('click', () => {
+    planeFolder.disabled = !planeFolder.disabled;
+    planeSlider.disabled = !planeSlider.disabled;
+    planeMesh.visible = !planeMesh.visible;
+});
 
 //THREE.JS SCENE
 
@@ -128,6 +184,34 @@ const boxMaterial = new THREE.MeshPhongMaterial(
 const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
 
 scene.add(boxMesh);
+
+//add a plane
+//parameters: width, height, widthSegments, heightSegments
+const planeGeometry = new THREE.PlaneGeometry(4, 4, 10, 10);
+
+//won't see anything unless you create a mesh, so create a mesh + object
+
+//MeshPhongMaterial adds lighting to plane in comparison to MeshBasicMaterial
+const planeMaterial = new THREE.MeshPhongMaterial(
+    {
+        //colors: https://libxlsxwriter.github.io/working_with_colors.html
+        color:'#0b008a',
+
+        //make back visible
+        side: THREE.DoubleSide,
+
+        //make vertices making the plane visible
+        flatShading: THREE.FlatShading,
+
+        opacity: 0.5,
+        transparent: true //make translucent
+    });
+
+//adds the mesh to the scene
+const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
+
+scene.add(planeMesh);
+planeMesh.visible = false;
 
 //parameters: color, intensity
 const frontLight = new THREE.DirectionalLight(0xffffff, 1.0);
