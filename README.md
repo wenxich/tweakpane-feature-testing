@@ -1,4 +1,4 @@
-## Testing Tweakpane's features in order to develop an UI for a project.
+## Tweakpane Feature Testing
 
 To run locally:
 > Install npm and node: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm/
