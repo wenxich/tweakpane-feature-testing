@@ -14,7 +14,7 @@ import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 let globalWidth = 2, globalHeight = 2, globalDepth = 2, globalPlaneFactor = 2;
 
 const pane = new Pane({
-    container: document.getElementById('container'),
+    container: document.getElementById('left_container'),
 });
 
 const tab = pane.addTab({
@@ -102,12 +102,15 @@ tab.pages[1].addInput(colorParams, 'skin')
 
 //tweakpane - new panel
 
-const disablePane = new Pane();
-
-const planeVisibilityButton = disablePane.addButton({
-    title: 'show',
-    label: 'plane'
+const disablePane = new Pane({
+    container: document.getElementById('right_container'),
 });
+
+const planeVisibilityCheckboxParams = {
+    'show plane': false,
+};
+
+const planeVisibilityCheckbox = disablePane.addInput(planeVisibilityCheckboxParams, 'show plane');
 
 const planeFolder = disablePane.addFolder({
     title: 'Plane Parameters',
@@ -136,7 +139,7 @@ planeSlider.on('change', (ev) => {
 
 planeSlider.disabled = true;
 
-planeVisibilityButton.on('click', () => {
+planeVisibilityCheckbox.on('change', () => {
     planeFolder.disabled = !planeFolder.disabled;
     planeSlider.disabled = !planeSlider.disabled;
     planeMesh.visible = !planeMesh.visible;

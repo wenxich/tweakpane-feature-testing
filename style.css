@@ -6,9 +6,16 @@ body {
 
 /* adjust position for tweakpane pane */
 
-#container {
+#left_container {
+  position: fixed;
+  left: 20%;
+  top: 75%;
+  margin: 0 auto;
+}
+
+#right_container {
   position: fixed;
   right: 20%;
-  top: 70%;
+  top: 75%;
   margin: 0 auto;
 }
